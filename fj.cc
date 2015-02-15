@@ -6,15 +6,27 @@
 
 using namespace std;
 
+istream& operator>>(istream &in, vector<fastjet::PseudoJet>& p) {
+  static double px, py, pz, E;
+  in >> px >> py >> pz >> E;
+  p.push_back(fastjet::PseudoJet(px,py,pz,E));
+  return in;
+}
+
 int main()
 {
-  vector<fastjet::PseudoJet> particles;
-  double px, py, pz, E;
-  while ( cin >> px >> py >> pz >> E ) {
-    particles.push_back( fastjet::PseudoJet( px,py,pz,E ) );
-  }
-
   fastjet::ClusterSequence::print_banner();
+  cout << endl;
+
+  const fastjet::PseudoJet beam(0.,0.,0.,0.);
+
+  vector<fastjet::PseudoJet> particles;
+  cout << fixed << setprecision(8);
+  while (cin >> particles) {
+    fastjet::PseudoJet &p = particles.back();
+    cout << setw(12) << p.pt() << ", "
+         << setw(12) << p.kt_distance(beam) << endl;
+  }
   cout << endl;
 
   fastjet::JetDefinition jet_def(fastjet::antikt_algorithm, 0.6);
